@@ -304,7 +304,7 @@ elif page == "Model Evaluation":
 
          LogisticRegression_df_20260127=pickle.load(open(f"cache/LogisticRegression_df_20260127.pkl", "rb"))
          RandomForest_df_20260127=pickle.load(open(f"cache/RandomForest_df_20260127.pkl", "rb"))
-         GradientBoostingClassifier_df=pickle.load(open(f"cache/GradientBoosting_df_20260127.pkl", "rb"))
+         GradientBoosting_df=pickle.load(open(f"cache/GradientBoosting_df_20260127.pkl", "rb"))
          DecisionTree_df=pickle.load(open(f"cache/DecisionTree_df_20260127.pkl", "rb"))
          SVC_df=pickle.load(open(f"cache/SVC_df_20260127.pkl", "rb"))
 
@@ -315,7 +315,7 @@ elif page == "Model Evaluation":
          st.table(RandomForest_df_20260127)
 
          st.write("3. GradientBoostingClassifier Model")
-         st.table(GradientBoostingClassifier_df)
+         st.table(GradientBoosting_df)
 
          st.write("4. DecisionTree Model")
          st.table(DecisionTree_df)
@@ -437,16 +437,16 @@ elif page == "Model Evaluation":
 elif page == "Predictions":
      st.title("Ride Outcome prediction")
      option=st.radio("Choose Model",("Booking Status Prediction", "Fare Prediction","Customer Cancellation Risk","Driver Delay Prediction"))
-     with open("cache/BStatus_models_bundle.pkl", "rb") as file:
-        models_bundle = pickle.load(file)
-        model2=models_bundle["B_Status_RandomForest"]
+     with open("cache/GB_model_BKstatus.pkl", "rb") as file:
+        model3 = pickle.load(file)
+        #model2=models_bundle["B_Status_RandomForest"]
      with open ("cache/Fare_pred_model/Fare_pred_RandomForest_20260129.pkl","rb") as f:
         model16=pickle.load(f)
      with open ("cache/merged_df.pkl","rb") as f:
         merged_df=pickle.load(f)
      with open ("cache/cust_cancel_dfs/Cust_RandomForest_20260128.pkl","rb") as f:
         model7=pickle.load(f)
-     with open ("cache/Driver_delay_DFs/Driver_RF_20260202.pkl","rb") as f:
+     with open ("cache/Driver_delay_DFs/Driver_RF_model.pkl","rb") as f:
         model11=pickle.load(f)
 
             # ---Common UI Inputs ---
@@ -519,7 +519,7 @@ elif page == "Predictions":
      
      if option == "Booking Status Prediction":
             # --- UI Inputs ---
-            city=1
+            
             pickup_location=st.selectbox(
                                 "Pickup loc",
                             ["Loc_1", "Loc_2", "Loc_3", "Loc_4", "Loc_5", "Loc_6", "Loc_7", "Loc_8", "Loc_9", 
@@ -537,9 +537,7 @@ elif page == "Predictions":
                             "Loc_34", "Loc_35", "Loc_36", "Loc_37", "Loc_38", "Loc_39", "Loc_40", "Loc_41", 
                             "Loc_42", "Loc_43", "Loc_44", "Loc_45", "Loc_46", "Loc_47", "Loc_48", "Loc_49", "Loc_50"])
             booking_value = st.number_input("Booking Value", min_value=0.0, step=0.1, format="%.2f")
-            month=2
-            day=10            
-
+             
             # --- Save Button ---
             if st.button("Submit"):
                 st.cache_data.clear()
@@ -558,42 +556,38 @@ elif page == "Predictions":
                     is_rush_hour = 1
                 else: is_rush_hour = 0
 
-                time_diff = actual_ride_time_min - estimated_ride_time_min
+                #time_diff = actual_ride_time_min - estimated_ride_time_min
                 distance_time_ratio = ride_distance_km / actual_ride_time_min + 0.001
                 surge_impact = base_fare * surge_multiplier
                 traffic_weather_product=traffic_level * weather_condition
+                traffic_surge_product=traffic_level * surge_multiplier
 
                 # Store data in an array (list)
                 BKStatus_data = [[
-                    day_of_week,
-                    is_weekend,
-                    hour_of_day,
-                    city,
-                    pickup_location,
-                    drop_location,
-                    vehicle_type,
-                    ride_distance_km,
-                    estimated_ride_time_min,
-                    actual_ride_time_min,
-                    traffic_level,
-                    weather_condition,
-                    base_fare,
-                    surge_multiplier,
-                    booking_value,
-                    month,
-                    day,
-                    long_distance_flag,
-                    fare_per_KM,
-                    fare_per_Min,
-                    is_rush_hour,
-                    time_diff,
-                    distance_time_ratio,
-                    surge_impact,
-                    bad_conditions,
-                    traffic_weather_product
+                                day_of_week,               
+                                is_weekend,                 
+                                hour_of_day,               
+                                pickup_location,           
+                                drop_location,           
+                                vehicle_type,             
+                                ride_distance_km,         
+                                estimated_ride_time_min,  
+                                traffic_level,              
+                                weather_condition,          
+                                base_fare,       
+                                surge_multiplier,
+                                booking_value,        
+                                long_distance_flag,
+                                fare_per_KM,      
+                                fare_per_Min,             
+                                is_rush_hour,               
+                                distance_time_ratio,      
+                                surge_impact,            
+                                traffic_weather_product,    
+                                traffic_surge_product 
                 ]]
                 
-                result1=model2.predict(BKStatus_data)
+                result1=model3.predict(BKStatus_data)
 
                 if result1==0:
                     st.write("Cancelled")
