@@ -1,4 +1,4 @@
-# Project3-Rapido_Insights
+# Rapido_Insights
 Rapido: Intelligent Mobility Insights: Ride Patterns, Cancellations &amp; Fare Forecasting
 **********************************************************
 Rapido: Intelligent Mobility Insights: Ride Patterns, Cancellations & Fare Forecasting
